@@ -22,7 +22,7 @@ local KeyAuthHandler = BasePlugin:extend()
 KeyAuthHandler.PRIORITY = 1000
 
 function KeyAuthHandler:new()
-  KeyAuthHandler.super.new(self, "key-auth")
+  KeyAuthHandler.super.new(self, "tavisca-key-auth")
 end
 
 local function load_credential(key)
@@ -63,7 +63,7 @@ end
 
 local function do_authentication(conf)
   if type(conf.key_names) ~= "table" then
-    ngx.log(ngx.ERR, "[key-auth] no conf.key_names set, aborting plugin execution")
+    ngx.log(ngx.ERR, "[tavisca-key-auth] no conf.key_names set, aborting plugin execution")
     return false, {status = 500, message= "Invalid plugin configuration"}
   end
 
