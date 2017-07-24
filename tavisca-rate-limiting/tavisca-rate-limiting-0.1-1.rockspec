@@ -22,9 +22,7 @@ build = {
     ["kong.plugins.tavisca-rate-limiting.migrations.cassandra"] = "migrations/cassandra.lua",
     ["kong.plugins.tavisca-rate-limiting.migrations.postgres"] = "migrations/postgres.lua",
     ["kong.plugins.tavisca-rate-limiting.handler"] = "handler.lua",
-    ["kong.plugins.tavisca-rate-limiting.hooks"] = "hooks.lua",
     ["kong.plugins.tavisca-rate-limiting.schema"] = "schema.lua",
-    ["kong.plugins.tavisca-rate-limiting.api"] = "api.lua",
     ["kong.plugins.tavisca-rate-limiting.daos"] = "daos.lua",
  }
 }
