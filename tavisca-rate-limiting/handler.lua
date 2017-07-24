@@ -103,8 +103,8 @@ function TaviscaRateLimitingHandler:access(conf)
     end
 
     -- If limit is exceeded, terminate the request
-    if stop 
-	return responses.send(429, "You have exceeded the API rate limit. Try again after some time.")
+    if stop then
+      return responses.send(429, "You have exceeded the API rate limit. Try again after some time.")
     end
   end
 
