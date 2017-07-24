@@ -22,9 +22,6 @@ build = {
     ["kong.plugins.tavisca-ip-restriction.migrations.cassandra"] = "migrations/cassandra.lua",
     ["kong.plugins.tavisca-ip-restriction.migrations.postgres"] = "migrations/postgres.lua",
     ["kong.plugins.tavisca-ip-restriction.handler"] = "handler.lua",
-    ["kong.plugins.tavisca-ip-restriction.hooks"] = "hooks.lua",
     ["kong.plugins.tavisca-ip-restriction.schema"] = "schema.lua",
-    ["kong.plugins.tavisca-ip-restriction.api"] = "api.lua",
-    ["kong.plugins.tavisca-ip-restriction.daos"] = "daos.lua",
  }
 }

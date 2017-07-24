@@ -16,9 +16,9 @@ end
 local cache = {}
 
 
-local IpRestrictionHandler = BasePlugin:extend()
+local TaviscaIpRestrictionHandler = BasePlugin:extend()
 
-IpRestrictionHandler.PRIORITY = 990
+TaviscaIpRestrictionHandler.PRIORITY = 990
 
 local function cidr_cache(cidr_tab)
   local cidr_tab_len = #cidr_tab
@@ -49,25 +49,25 @@ local function cidr_cache(cidr_tab)
   return parsed_cidrs
 end
 
-function IpRestrictionHandler:new()
-  IpRestrictionHandler.super.new(self, "tavisca-ip-restriction")
+function TaviscaIpRestrictionHandler:new()
+  TaviscaIpRestrictionHandler.super.new(self, "tavisca-ip-restriction")
 end
 
-function IpRestrictionHandler:init_worker()
-  IpRestrictionHandler.super.init_worker(self)
+function TaviscaIpRestrictionHandler:init_worker()
+  TaviscaIpRestrictionHandler.super.init_worker(self)
   local ok, err = iputils.enable_lrucache()
   if not ok then
     ngx.log(ngx.ERR, "[tavisca-ip-restriction] Could not enable lrucache: ", err)
   end
 end
 
-function IpRestrictionHandler:access(conf)
-  IpRestrictionHandler.super.access(self)
+function TaviscaIpRestrictionHandler:access(conf)
+  TaviscaIpRestrictionHandler.super.access(self)
   local block = false
   local binary_remote_addr = ngx.var.binary_remote_addr
 
   if not binary_remote_addr then
-    return responses.send_HTTP_FORBIDDEN("Cannot identify the client IP address, unix domain sockets are not supported.")
+    return responses.send_HTTP_FORBIDDEN({code="686", message="Cannot identify the client IP address, unix domain sockets are not supported."})
   end
 
   if conf.blacklist and #conf.blacklist > 0 then
@@ -79,8 +79,8 @@ function IpRestrictionHandler:access(conf)
   end
 
   if block then
-    return responses.send_HTTP_FORBIDDEN(code="686", message="You cannot make API calls as your IP address has not been added to the whitelist. Please contact the administrator.")
+    return responses.send_HTTP_FORBIDDEN({code="686", message="You cannot make API calls as your IP address has not been added to the whitelist. Please contact the administrator."})
   end
 end
 
-return IpRestrictionHandler
+return TaviscaIpRestrictionHandler
