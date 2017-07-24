@@ -13,9 +13,9 @@ local ngx_timer_at = ngx.timer.at
 local RATELIMIT_LIMIT = "X-RateLimit-Limit"
 local RATELIMIT_REMAINING = "X-RateLimit-Remaining"
 
-local RateLimitingHandler = BasePlugin:extend()
+local TaviscaRateLimitingHandler = BasePlugin:extend()
 
-RateLimitingHandler.PRIORITY = 900
+TaviscaRateLimitingHandler.PRIORITY = 900
 
 local function get_identifier(conf)
   local identifier
@@ -62,12 +62,12 @@ local function get_usage(conf, api_id, identifier, current_timestamp, limits)
   return usage, stop
 end
 
-function RateLimitingHandler:new()
-  RateLimitingHandler.super.new(self, "tavisca-rate-limiting")
+function TaviscaRateLimitingHandler:new()
+  TaviscaRateLimitingHandler.super.new(self, "tavisca-rate-limiting")
 end
 
-function RateLimitingHandler:access(conf)
-  RateLimitingHandler.super.access(self)
+function TaviscaRateLimitingHandler:access(conf)
+  TaviscaRateLimitingHandler.super.access(self)
   local current_timestamp = timestamp.get_utc()
 
   -- Consumer is identified by ip address or authenticated_credential id
@@ -104,7 +104,7 @@ function RateLimitingHandler:access(conf)
 
     -- If limit is exceeded, terminate the request
     if stop then
-      return responses.send(429,code="685", message="You have exceeded the API rate limit. Try again after some time.")
+      return responses.send(429, {code="685", message="You have exceeded the API rate limit. Try again after some time." })
     end
   end
 
@@ -120,4 +120,4 @@ function RateLimitingHandler:access(conf)
   end
 end
 
-return RateLimitingHandler
+return TaviscaRateLimitingHandler
