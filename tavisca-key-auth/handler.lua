@@ -17,12 +17,12 @@ local type = type
 
 local _realm = 'Key realm="'.._KONG._NAME..'"'
 
-local KeyAuthHandler = BasePlugin:extend()
+local TaviscaKeyAuthHandler = BasePlugin:extend()
 
-KeyAuthHandler.PRIORITY = 1000
+TaviscaKeyAuthHandler.PRIORITY = 1000
 
-function KeyAuthHandler:new()
-  KeyAuthHandler.super.new(self, "tavisca-key-auth")
+function TaviscaKeyAuthHandler:new()
+  TaviscaKeyAuthHandler.super.new(self, "tavisca-key-auth")
 end
 
 local function load_credential(key)
@@ -64,7 +64,7 @@ end
 local function do_authentication(conf)
   if type(conf.key_names) ~= "table" then
     ngx.log(ngx.ERR, "[tavisca-key-auth] no conf.key_names set, aborting plugin execution")
-    return false, {status = 500, message= "Invalid plugin configuration"}
+    return false, {status = 500, error= "Invalid plugin configuration"}
   end
 
   local key
@@ -107,14 +107,14 @@ local function do_authentication(conf)
       break
     elseif type(v) == "table" then
       -- duplicate API key, HTTP 401
-      return false, {status = 401, code="683", message = "You cannot provide multiple API keys in the request."}
+      return false, {status = 401, error = {code = "683", message = "You cannot provide multiple API keys in the request."}}
     end
   end
 
   -- this request is missing an API key, HTTP 401
   if not key then
     ngx.header["WWW-Authenticate"] = _realm
-    return false, { status = 401, code="682", message = "The API key must be provided in the request." }
+    return false, { status = 401, error = {code="682", message = "The API key must be provided in the request."}}
   end
 
   -- retrieve our consumer linked to this API key
@@ -126,7 +126,7 @@ local function do_authentication(conf)
 
   -- no credential in DB, for this key, it is invalid, HTTP 403
   if not credential then
-    return false, {status = 403, code="684", message = "Invalid API key provided in the request."}
+    return false, {status = 403, error = {code="684", message = "Invalid API key provided in the request."}}
   end
 
   -----------------------------------------
@@ -146,8 +146,8 @@ local function do_authentication(conf)
 end
 
 
-function KeyAuthHandler:access(conf)
-  KeyAuthHandler.super.access(self)
+function TaviscaKeyAuthHandler:access(conf)
+  TaviscaKeyAuthHandler.super.access(self)
 
   if ngx.ctx.authenticated_credential and conf.anonymous ~= "" then
     -- we're already authenticated, and we're configured for using anonymous, 
@@ -166,10 +166,10 @@ function KeyAuthHandler:access(conf)
       end
       set_consumer(consumer, nil)
     else
-      return responses.send(err.status, err.message)
+      return responses.send(err.status, err.error)
     end
   end
 end
 
 
-return KeyAuthHandler
+return TaviscaKeyAuthHandler
